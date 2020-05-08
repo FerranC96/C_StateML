@@ -14,15 +14,14 @@ folder_name = "classRF"
 
 if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
-if os.path.isdir(f"./input/{folder_name}") == False:
-    os.makedirs(f"./input/{folder_name}")
-    sys.exit("ERROR: There is no input folder") 
+
     
-input_dir = f"./input/{folder_name}"
+input_dir = "../D_CommonDatasets/C_Fig4Time/States"
 output_dir = f"./output/{folder_name}"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 info_run =  input("Write RF info run (using no spaces!): ")
+os.makedirs(f"{output_dir}/{info_run}")
 
 filelist = [f for f in os.listdir(input_dir) if f.endswith(".txt")]
 
@@ -57,7 +56,7 @@ for file in filelist:
 if concat["file_origin"].value_counts().size > 1:
     print ("Downsampling taking place. Check output folder for more info")
     print (concat["file_origin"].value_counts())
-    dwns_concat = downsample_data(concat, f"{info_run}_downs_b4_RF", output_dir)
+    dwns_concat = downsample_data(concat, f"{info_run}_downs_b4_RF", f"{output_dir}/{info_run}")
     print (dwns_concat["file_origin"].value_counts())
 else:
     print ("Only one input file detected; no downsampling")
@@ -69,15 +68,15 @@ X = processed_df.drop("cell-state_num", axis=1)
 #New X to drop @uninmportnat@ features/PTMs
 # X = processed_df.drop(["cell-state_num","156Gd_pNF-kB p65","160Gd_pAMPKa","141Pr_pPDPK1","165Ho_Beta-Catenin_Active","153Eu_pCREB","147Sm_pBTK","170Er_pMEK1_2","148Nd_pSRC","168Er_pSMAD2_3","167Er_pERK1_2","163Dy_pP90RSK","157Gd_pMKK3_MKK6","154Sm_pSMAD1_5_9","166Er_pGSK3b","172Yb_pS6","155Gd_pAKT S473"], axis=1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.02)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
 print (X_train.shape, y_train.shape)
 print (X_test.shape, y_test.shape)
 
 
 # clf = RandomForestRegressor(n_estimators=120, max_depth=None,
 #                                 random_state=0, n_jobs=12)
-clf = RandomForestClassifier(n_estimators=480, max_depth=None,
-                                random_state=0, n_jobs=12) 
+clf = RandomForestClassifier(n_estimators=960, max_depth=None,
+                                random_state=0, n_jobs=8) 
 
 model_RFreg = clf.fit(X_train, y_train)
 
@@ -99,7 +98,7 @@ plt.bar(range(X.shape[1]), importances[indices],
         color="r", yerr=std[indices], align="center")
 plt.xticks(range(X.shape[1]), indices)
 plt.xlim([-1, X.shape[1]])
-plt.savefig(f"{output_dir}/{info_run}_feature_importances.png")
+plt.savefig(f"{output_dir}/{info_run}/{info_run}_feature_importances.png")
 
 plt.figure()
 plt.title("Prediction vs Real")
@@ -108,7 +107,7 @@ plt.plot(y_test, predictions, label=metrics.r2_score(y_test, predictions))
 plt.xlabel("True Values")
 plt.ylabel("Predictions")
 plt.legend(loc='best')
-plt.savefig(f"{output_dir}/{info_run}_pred_vs_real.png")
+plt.savefig(f"{output_dir}/{info_run}/{info_run}_pred_vs_real.png")
 
 
 #Get all data
@@ -135,7 +134,7 @@ estimator = clf.estimators_[5]
 
 from sklearn.tree import export_graphviz
 # Export as dot file
-export_graphviz(estimator, out_file=f'{info_run}_tree.dot',
+export_graphviz(estimator, out_file=f"{output_dir}/{info_run}/{info_run}_tree.dot",
                 feature_names=X_all.columns,
                 class_names=["apoptosis","G0","G1","S","G2","M"],
                 rounded = True, proportion = False, 
@@ -144,16 +143,16 @@ export_graphviz(estimator, out_file=f'{info_run}_tree.dot',
 
 
 mat_full = metrics.confusion_matrix(y_all, predict_alldata)
-pd.DataFrame(mat_full).to_csv(f"{output_dir}/{info_run}_confusion_matrix_FULLdata_{model_RFreg.score(X_all, y_all)}.csv")
+pd.DataFrame(mat_full).to_csv(f"{output_dir}/{info_run}/{info_run}_confusion_matrix_FULLdata_{model_RFreg.score(X_all, y_all)}.csv")
 
 mat = metrics.confusion_matrix(y_test, predictions)
-pd.DataFrame(mat).to_csv(f"{output_dir}/{info_run}_confusion_matrix_TESTdata_{model_RFreg.score(X_test, y_test)}.csv")
+pd.DataFrame(mat).to_csv(f"{output_dir}/{info_run}/{info_run}_confusion_matrix_TESTdata_{model_RFreg.score(X_test, y_test)}.csv")
 
 plt.figure()
 sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False)
 plt.xlabel('true label')
 plt.ylabel('predicted label')
-plt.savefig(f"{output_dir}/{info_run}_confusion_matrix.png")
+plt.savefig(f"{output_dir}/{info_run}/{info_run}_confusion_matrix.png")
 plt.show()
 ##NORMALIZE MATRIX COUNT##
 # mat_norm = mat.astype('float') / mat.sum(axis=1)[:, np.newaxis]

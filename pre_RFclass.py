@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import sys
-from sklearn.ensemble import RandomForestClassifier
 from aux import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CONFIG~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -9,11 +8,8 @@ folder_name = "pre_classRF"
 
 if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
-if os.path.isdir(f"./input/{folder_name}") == False:
-    os.makedirs(f"./input/{folder_name}")
-    sys.exit("ERROR: There is no input folder") 
     
-input_dir = f"./input/{folder_name}"
+input_dir = "../D_CommonDatasets/C_Fig4Time"
 output_dir = f"./output/{folder_name}"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -25,16 +21,14 @@ for i in filelist:
     file_in = i
 
 file = f"{input_dir}/{file_in}"
-df_file = pd.read_csv(file, sep = '\t')
-print (df_file.describe(include='all'))
+df_arc = pd.read_csv(file, sep = '\t')
+print (df_arc.describe(include='all'))
 
 
-df_arc = arcsinh_transf(5, df_file)[0]
-
-state_group = df_arc.groupby("cell-state")
-print (df_arc.groupby("cell-state").size())
+state_group = df_arc.groupby("Day")
+print (df_arc.groupby("Day").size())
 
 for name, group in state_group:
     print(name)
     print(group)
-    group.to_csv(f"{output_dir}/{name}_arctrans", index = False, sep = '\t')
+    group.to_csv(f"{output_dir}/{name}_subset.txt", index = False, sep = '\t')
