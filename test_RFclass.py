@@ -16,7 +16,7 @@ if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
 
     
-input_dir = "../D_CommonDatasets/C_Fig4Time/States"
+input_dir = "../D_CommonDatasets/C_Fig2/States"
 output_dir = f"./output/{folder_name}"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -89,6 +89,7 @@ indices = np.argsort(importances)[::-1]
 print("Feature ranking:")
 for f in range(X_train.shape[1]):
     print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]), " -> " , X.columns[indices[f]])
+
 print ("Score agains test data", model_RFreg.score(X_test, y_test))
 
 
@@ -110,8 +111,29 @@ plt.legend(loc='best')
 plt.savefig(f"{output_dir}/{info_run}/{info_run}_pred_vs_real.png")
 
 
-#Get all data
-processed_alldf = concat[cols].copy()
+#Get non-downs data
+# processed_alldf = concat[cols].copy()
+
+#Get diff set of data
+processed_alldf = pd.DataFrame()
+#Add counter to keep track of the number of files in input -> 
+# -> cell ID will be a mix of these (Filenumber | filename.txt)
+fcounter = 0
+second_dir = "../D_CommonDatasets/C_Fig4Time/States"
+filelist = [f for f in os.listdir(second_dir) if f.endswith(".txt")]
+for file in filelist:
+    name = file.split('.txt')[0]
+    fcounter += 1
+    df = pd.read_csv(f"{second_dir}/{file}", sep = '\t')
+    df["file_origin"] = str(fcounter)+" | "+ file # add a new column of 'file_origin' that will be used to separate each file after umap calculation
+    df["Sample_ID-Cell_Index"] = df["Cell_Index"].apply(
+                                    lambda x: str(fcounter)+"-"+str(x)) #File+ID #This way the cell-index will be preserved after Cytobank upload
+    # df["Cell_Index"] = df["Cell_Index"].apply(lambda x: str(fcounter)+"-"+str(x)) #File+ID
+    processed_alldf = processed_alldf.append(df, ignore_index=True)
+
+processed_alldf = processed_alldf[cols]
+
+
 y_all = processed_alldf["cell-state_num"]
 X_all = processed_alldf.drop("cell-state_num", axis=1)
 # X_all = processed_alldf.drop(["cell-state_num","156Gd_pNF-kB p65","160Gd_pAMPKa","141Pr_pPDPK1","165Ho_Beta-Catenin_Active","153Eu_pCREB","147Sm_pBTK","170Er_pMEK1_2","148Nd_pSRC","168Er_pSMAD2_3","167Er_pERK1_2","163Dy_pP90RSK","157Gd_pMKK3_MKK6","154Sm_pSMAD1_5_9","166Er_pGSK3b","172Yb_pS6","155Gd_pAKT S473"], axis=1)
@@ -119,8 +141,8 @@ print ("Predictions on original non-downsampled data: ", model_RFreg.score(X_all
 
 predict_alldata = clf.predict(X_all)
 
-concat["Prediction"] = predict_alldata
-print ("Save predictions to predictions_all_concat.txt")
+# concat["Prediction"] = predict_alldata
+# print ("Save predictions to predictions_all_concat.txt")
 # concat.to_csv(f"{output_dir}/predictions_{info_run}_allconcat.txt", 
 #                     index = False)
 #Using the downsampled concatenated input as train (balanced states) the accurtacy score when testing all data goes down signficantly to just 50%
