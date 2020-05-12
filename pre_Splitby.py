@@ -1,3 +1,5 @@
+#Not crucial since the main script already splits by state. 
+# Use to manipulate raw data and generate relevant subsets
 import pandas as pd
 import os
 import sys
@@ -9,7 +11,7 @@ folder_name = "pre_classRF"
 if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
     
-input_dir = "../D_CommonDatasets/C_Fig4Time/Times"
+input_dir = "../D_CommonDatasets/CRC-TME/Epithelial-Cells"
 output_dir = f"./output/{folder_name}"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 

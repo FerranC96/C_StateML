@@ -7,6 +7,7 @@ from sklearn import metrics
 from sklearn.model_selection import KFold, train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.tree.export import export_text
+from joblib import dump
 from aux import *
 import seaborn as sns; sns.set()
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CONFIG~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -16,7 +17,7 @@ if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
 
     
-input_dir = "../D_CommonDatasets/C_Fig2/States"
+input_dir = "../D_CommonDatasets/C_Fig4Time/States"
 output_dir = f"./output/{folder_name}"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
@@ -75,7 +76,7 @@ print (X_test.shape, y_test.shape)
 
 # clf = RandomForestRegressor(n_estimators=120, max_depth=None,
 #                                 random_state=0, n_jobs=12)
-clf = RandomForestClassifier(n_estimators=960, max_depth=None,
+clf = RandomForestClassifier(n_estimators=480, max_depth=None,
                                 random_state=0, n_jobs=8) 
 
 model_RFreg = clf.fit(X_train, y_train)
@@ -110,6 +111,9 @@ plt.ylabel("Predictions")
 plt.legend(loc='best')
 plt.savefig(f"{output_dir}/{info_run}/{info_run}_pred_vs_real.png")
 
+#Alternative to pickle that works better when storing large numpy arrays!
+dump(clf, f"{output_dir}/{info_run}/{info_run}_RFcclass.joblib")
+sys.exit("DEPRECATED SCRIPT. Used to generate the RF cycle classifier models")
 
 #Get non-downs data
 # processed_alldf = concat[cols].copy()
@@ -119,7 +123,7 @@ processed_alldf = pd.DataFrame()
 #Add counter to keep track of the number of files in input -> 
 # -> cell ID will be a mix of these (Filenumber | filename.txt)
 fcounter = 0
-second_dir = "../D_CommonDatasets/C_Fig4Time/States"
+second_dir = "../D_CommonDatasets/CRC-TME/ALLcells"
 filelist = [f for f in os.listdir(second_dir) if f.endswith(".txt")]
 for file in filelist:
     name = file.split('.txt')[0]
