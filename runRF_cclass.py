@@ -17,7 +17,7 @@ if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
 
     
-input_dir = "../D_CommonDatasets/CRC-TME/ALLcells"
+input_dir = "../D_CommonDatasets/C_Fig4Time"
 output_dir = f"./output/{folder_name}"
 
 info_run =  input("Write RF info run (using no spaces!): ")
@@ -41,7 +41,7 @@ os.makedirs(f"{output_dir}/{info_run}")
         #Print the performacne of model and confusion matrix et al
 
 #Currently hard reading from model folder:
-model_to_use = "./Models/EPI_msiFig4_RFcclass.joblib"
+model_to_use = "./Models/FIB_mcFig5_RFcclass.joblib"
 print("Using model: ", model_to_use)
 clf = load(model_to_use)
 
@@ -95,7 +95,7 @@ X_all = working_data.drop("cell-state_num", axis=1) #No need for this once we ha
 predict_alldata = clf.predict(X_all)
 
 #Save results to file:
-input_data["Predicted_state"] = predict_alldata
+# input_data["Predicted_state"] = predict_alldata
 # print ("Save predictions as a tab-separated .txt file")
 # input_data.to_csv(f"{output_dir}/{info_run}/{info_run}_predictions.txt", 
 #                     index = False)
@@ -117,7 +117,7 @@ f.close()
 
 
 
-
+#Model used -> Nice to have as a sanity check
 #Plot tree number 5 out of the whole forest
 estimator = clf.estimators_[5]
 from sklearn.tree import export_graphviz

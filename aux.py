@@ -28,15 +28,15 @@ def arcsinh_transf(cofactor, no_arc):
     #     print ("(there was no concatenation prior to transforming)")
     return arc, cols
 
-def downsample_data(no_arc, info_run, output_dir):
+def downsample_data(no_arc, split_bycol, info_run, output_dir):
     downsampled_dframe = no_arc.copy()
     #Defiine downsampling size (N) per file:
-    downsample_size = downsampled_dframe["file_origin"].value_counts().min() #at least N cells in all input files
+    downsample_size = downsampled_dframe[split_bycol].value_counts().min() #at least N cells in all input files
     print ("Working with ", downsample_size, " cells per file_origin")
     #Group by file+origin and sample without replacement -> 
     # thus we can sample file for which len(file)=N without -tive consequences
     
-    reduced_df = downsampled_dframe.groupby("file_origin").apply(lambda x:
+    reduced_df = downsampled_dframe.groupby(split_bycol).apply(lambda x:
                                                     x.sample(downsample_size))
     
     #Create new file to store downsampling status for all cell IDs

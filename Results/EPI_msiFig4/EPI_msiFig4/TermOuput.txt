@@ -1,0 +1,34 @@
+Write RF info run (using no spaces!): yeah!
+Input files:
+S-phase_subset.txt
+G0_subset.txt
+G1_subset.txt
+apoptosis_subset.txt
+M-phase_subset.txt
+G2_subset.txt
+6Downsampling taking place. Check output folder for more info
+3 | G1_subset.txt           563146
+2 | G0_subset.txt           307004
+4 | apoptosis_subset.txt    147238
+1 | S-phase_subset.txt      134501
+6 | G2_subset.txt            15281
+5 | M-phase_subset.txt        5306
+Name: file_origin, dtype: int64
+Working with  5306  cells per file_origin
+5 | M-phase_subset.txt      5306
+1 | S-phase_subset.txt      5306
+3 | G1_subset.txt           5306
+4 | apoptosis_subset.txt    5306
+2 | G0_subset.txt           5306
+6 | G2_subset.txt           5306
+Name: file_origin, dtype: int64
+(30244, 5) (30244,)
+(1592, 5) (1592,)
+Feature ranking:
+1. feature 3 (0.215586)  ->  150Nd_pRB
+2. feature 2 (0.215365)  ->  142Nd_cCaspase 3
+3. feature 1 (0.194411)  ->  127I_IdU
+4. feature 4 (0.191563)  ->  176Yb_Cyclin B1
+5. feature 0 (0.183076)  ->  89Y_pHH3
+Score agains test data 1.0
+DEPRECATED SCRIPT. Used to generate the RF cycle classifier models
