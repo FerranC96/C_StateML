@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import sys
+import magic
+import tasklogger
 from joblib import load
 from sklearn import metrics
 from sklearn.model_selection import KFold, train_test_split, cross_val_score
@@ -17,7 +19,7 @@ if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
 
     
-input_dir = "../D_CommonDatasets/C_Fig4Time"
+input_dir = "../D_CommonDatasets/CRC-TME/ALLcells"
 output_dir = f"./output/{folder_name}"
 
 info_run =  input("Write RF info run (using no spaces!): ")
@@ -41,7 +43,7 @@ os.makedirs(f"{output_dir}/{info_run}")
         #Print the performacne of model and confusion matrix et al
 
 #Currently hard reading from model folder:
-model_to_use = "./Models/FIB_mcFig5_RFcclass.joblib"
+model_to_use = "./Models/EPI_msiFig4_statePTMs_RFcclass.joblib" #model trained with denoised
 print("Using model: ", model_to_use)
 clf = load(model_to_use)
 
@@ -92,6 +94,15 @@ working_data = input_data[cols]
 
 #Apply class and get predicted cell states:
 X_all = working_data.drop("cell-state_num", axis=1) #No need for this once we have hardcoded cycle markers
+
+#Denoise input testing data with MAGIC
+# print(X_all.head())
+# with tasklogger.log_task("allcore_magic"):
+#     magic_op = magic.MAGIC(knn=5, solver="exact" , n_jobs=-1)
+#     X_alldenoised = magic_op.fit_transform(X_all)
+# print(X_alldenoised)
+# X_all = X_alldenoised
+
 predict_alldata = clf.predict(X_all)
 
 #Save results to file:

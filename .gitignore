@@ -1,1 +1,5 @@
 Results/EPI_msiFig4/crcTME_epi/crcTME_epi_cpredictions.7z
+train_RFclass.py
+Models/TRAINING_EPI_msiFig4_statePTMs/EPI_msiFig4_statePTMs_downs_b4_RF_downsampled_IDs.csv
+Models/TRAINING_EPIfig4_denoise/EPIfig4_denoise_downs_b4_RF_downsampled_IDs.csv
+output/classRF/

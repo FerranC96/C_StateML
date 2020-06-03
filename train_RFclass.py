@@ -3,10 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import sys
+import magic
+import tasklogger
 from sklearn import metrics
 from sklearn.model_selection import KFold, train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.tree.export import export_text
+from sklearn.tree import export_text
 from joblib import dump
 from aux import *
 import seaborn as sns; sns.set()
@@ -17,12 +19,13 @@ if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
 
     
-input_dir = "../D_CommonDatasets/CRC-TME/Fibroblasts"
+input_dir = "../D_CommonDatasets/C_Fig4Time/Fig2like_gating" #Contains normalised data(no need to splitby)
+second_dir = "../D_CommonDatasets/C_Fig2/States" #Shoudl eb same as above unless testing
 output_dir = f"./output/{folder_name}"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 info_run =  input("Write RF info run (using no spaces!): ")
-os.makedirs(f"{output_dir}/{info_run}")
+os.makedirs(f"{output_dir}/TRAINING_{info_run}")
 
 filelist = [f for f in os.listdir(input_dir) if f.endswith(".txt")]
 
@@ -57,14 +60,24 @@ for file in filelist:
 
 print ("Downsampling taking place. Check output folder for more info")
 print (concat["cell-state_num"].value_counts())
-dwns_concat = downsample_data(concat, "cell-state_num",f"{info_run}_downs_b4_RF", f"{output_dir}/{info_run}")
+dwns_concat = downsample_data(concat, "cell-state_num",f"{info_run}_downs_b4_RF", f"{output_dir}/TRAINING_{info_run}")
 print (dwns_concat["cell-state_num"].value_counts())
 
 
-
 processed_df = dwns_concat[cols].copy()
+
+
 y = processed_df["cell-state_num"]
 X = processed_df.drop("cell-state_num", axis=1)
+
+#Denoise input training data with MAGIC
+# print(X.head())
+# with tasklogger.log_task("monocore"):
+#     magic_op = magic.MAGIC(knn=5, n_jobs=-2)
+#     X_denoised = magic_op.fit_transform(X)
+# print(X_denoised)
+# X = X_denoised
+
 #New X to drop @uninmportnat@ features/PTMs
 # X = processed_df.drop(["cell-state_num","156Gd_pNF-kB p65","160Gd_pAMPKa","141Pr_pPDPK1","165Ho_Beta-Catenin_Active","153Eu_pCREB","147Sm_pBTK","170Er_pMEK1_2","148Nd_pSRC","168Er_pSMAD2_3","167Er_pERK1_2","163Dy_pP90RSK","157Gd_pMKK3_MKK6","154Sm_pSMAD1_5_9","166Er_pGSK3b","172Yb_pS6","155Gd_pAKT S473"], axis=1)
 
@@ -99,7 +112,7 @@ plt.bar(range(X.shape[1]), importances[indices],
         color="r", yerr=std[indices], align="center")
 plt.xticks(range(X.shape[1]), indices)
 plt.xlim([-1, X.shape[1]])
-plt.savefig(f"{output_dir}/{info_run}/{info_run}_feature_importances.png")
+plt.savefig(f"{output_dir}/TRAINING_{info_run}/{info_run}_feature_importances.png")
 
 plt.figure()
 plt.title("Prediction vs Real")
@@ -108,10 +121,10 @@ plt.plot(y_test, predictions, label=metrics.r2_score(y_test, predictions))
 plt.xlabel("True Values")
 plt.ylabel("Predictions")
 plt.legend(loc='best')
-plt.savefig(f"{output_dir}/{info_run}/{info_run}_pred_vs_real.png")
+plt.savefig(f"{output_dir}/TRAINING_{info_run}/{info_run}_pred_vs_real.png")
 
 #Alternative to pickle that works better when storing large numpy arrays!
-dump(clf, f"{output_dir}/{info_run}/{info_run}_RFcclass.joblib")
+dump(clf, f"{output_dir}/TRAINING_{info_run}/{info_run}_RFcclass.joblib")
 print("DEPRECATED SCRIPT. Used to generate the RF cycle classifier models")
 
 #Get non-downs data
@@ -122,7 +135,6 @@ processed_alldf = pd.DataFrame()
 #Add counter to keep track of the number of files in input -> 
 # -> cell ID will be a mix of these (Filenumber | filename.txt)
 fcounter = 0
-second_dir = "../D_CommonDatasets/CRC-TME/ALLcells"
 filelist = [f for f in os.listdir(second_dir) if f.endswith(".txt")]
 for file in filelist:
     name = file.split('.txt')[0]
@@ -139,6 +151,15 @@ processed_alldf = processed_alldf[cols]
 
 y_all = processed_alldf["cell-state_num"]
 X_all = processed_alldf.drop("cell-state_num", axis=1)
+
+#Denoise input testing data with MAGIC
+# print(X_all.head())
+# with tasklogger.log_task("monocore_test"):
+#     magic_op = magic.MAGIC(knn=5, n_jobs=-2)
+#     X_alldenoised = magic_op.fit_transform(X_all)
+# print(X_alldenoised)
+# X_all = X_alldenoised
+
 # X_all = processed_alldf.drop(["cell-state_num","156Gd_pNF-kB p65","160Gd_pAMPKa","141Pr_pPDPK1","165Ho_Beta-Catenin_Active","153Eu_pCREB","147Sm_pBTK","170Er_pMEK1_2","148Nd_pSRC","168Er_pSMAD2_3","167Er_pERK1_2","163Dy_pP90RSK","157Gd_pMKK3_MKK6","154Sm_pSMAD1_5_9","166Er_pGSK3b","172Yb_pS6","155Gd_pAKT S473"], axis=1)
 print ("Predictions on original non-downsampled data: ", model_RFreg.score(X_all, y_all))
 
@@ -159,7 +180,7 @@ estimator = clf.estimators_[5]
 
 from sklearn.tree import export_graphviz
 # Export as dot file
-export_graphviz(estimator, out_file=f"{output_dir}/{info_run}/{info_run}_tree.dot",
+export_graphviz(estimator, out_file=f"{output_dir}/TRAINING_{info_run}/{info_run}_tree.dot",
                 feature_names=X_all.columns,
                 class_names=["apoptosis","G0","G1","S","G2","M"],
                 rounded = True, proportion = False, 
@@ -168,16 +189,16 @@ export_graphviz(estimator, out_file=f"{output_dir}/{info_run}/{info_run}_tree.do
 
 
 mat_full = metrics.confusion_matrix(y_all, predict_alldata)
-pd.DataFrame(mat_full).to_csv(f"{output_dir}/{info_run}/{info_run}_confusion_matrix_FULLdata_{model_RFreg.score(X_all, y_all)}.csv")
+pd.DataFrame(mat_full).to_csv(f"{output_dir}/TRAINING_{info_run}/{info_run}_confusion_matrix_FULLdata_{model_RFreg.score(X_all, y_all)}.csv")
 
 mat = metrics.confusion_matrix(y_test, predictions)
-pd.DataFrame(mat).to_csv(f"{output_dir}/{info_run}/{info_run}_confusion_matrix_TESTdata_{model_RFreg.score(X_test, y_test)}.csv")
+pd.DataFrame(mat).to_csv(f"{output_dir}/TRAINING_{info_run}/{info_run}_confusion_matrix_TESTdata_{model_RFreg.score(X_test, y_test)}.csv")
 
 plt.figure()
 sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False)
 plt.xlabel('true label')
 plt.ylabel('predicted label')
-plt.savefig(f"{output_dir}/{info_run}/{info_run}_confusion_matrix.png")
+plt.savefig(f"{output_dir}/TRAINING_{info_run}/{info_run}_confusion_matrix.png")
 plt.show()
 ##NORMALIZE MATRIX COUNT##
 # mat_norm = mat.astype('float') / mat.sum(axis=1)[:, np.newaxis]
