@@ -4,3 +4,4 @@ Models/TRAINING_EPI_msiFig4_statePTMs/EPI_msiFig4_statePTMs_downs_b4_RF_downsamp
 Models/TRAINING_EPIfig4_denoise/EPIfig4_denoise_downs_b4_RF_downsampled_IDs.csv
 output/classRF/
 Results/EPI_msiFig4/crcTME_ALLcells/Manual_plots/.RData
+.vscode/
