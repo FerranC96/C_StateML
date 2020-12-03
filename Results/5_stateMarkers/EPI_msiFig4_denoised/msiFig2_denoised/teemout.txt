@@ -1,0 +1,62 @@
+Write RF info run (using no spaces!): msiFig2_denoised
+Using model:  ./Models/EPIfig4_denoise_RFcclass.joblib
+Input files:
+S-phase_subset.txt
+G0_subset.txt
+G1_subset.txt
+apoptosis_subset.txt
+M-phase_subset.txt
+G2_subset.txt
+   89Y_pHH3  127I_IdU  142Nd_cCaspase 3  150Nd_pRB  176Yb_Cyclin B1
+0  0.000000  5.841514          1.470115   3.289118         2.232766
+1  0.618009  7.307363          1.913054   3.698604         0.000000
+2  0.440271  7.141987          1.384866   4.218822         0.049527
+3  0.000000  6.813473          1.357069   3.899952         0.639480
+4  0.000000  6.162450          1.841072   4.428017         3.890830
+Calculating allcore_magic...
+Calculating MAGIC...
+  Running MAGIC on 1002007 cells and 5 genes.
+  Calculating graph and diffusion operator...
+    Calculating KNN search...
+/home/ferran/miniconda3/lib/python3.7/site-packages/graphtools/graphs.py:293: RuntimeWarning: Detected zero distance between 16247 pairs of samples. Consider removing duplicates to avoid errors in downstream processing.
+  RuntimeWarning,
+    Calculated KNN search in 974.20 seconds.
+    Calculating affinities...
+    Calculated affinities in 674.21 seconds.
+/home/ferran/miniconda3/lib/python3.7/site-packages/graphtools/base.py:553: RuntimeWarning: K should have a non-zero diagonal
+  warnings.warn("K should have a non-zero diagonal", RuntimeWarning)
+  Calculated graph and diffusion operator in 1691.55 seconds.
+/home/ferran/miniconda3/lib/python3.7/site-packages/magic/magic.py:500: FutureWarning: The SparseDataFrame class is removed from pandas. Accessing it from the top-level namespace will also be removed in the next version
+  and isinstance(X, (pd.SparseDataFrame, sparse.spmatrix))
+  Calculating imputation...
+  Calculated imputation in 1.70 seconds.
+/home/ferran/miniconda3/lib/python3.7/site-packages/magic/utils.py:135: FutureWarning: The SparseDataFrame class is removed from pandas. Accessing it from the top-level namespace will also be removed in the next version
+  if isinstance(target_data, pd.SparseDataFrame):
+Calculated MAGIC in 1693.48 seconds.
+Calculated allcore_magic in 1693.48 seconds.
+         89Y_pHH3  127I_IdU  142Nd_cCaspase 3  150Nd_pRB  176Yb_Cyclin B1
+0        0.041946  5.843548          1.427491   3.317050         2.270334
+1        0.605617  7.330298          1.913624   3.723651         0.016132
+2        0.406934  7.135688          1.368897   4.178493         0.021086
+3        0.034717  6.865281          1.410468   3.895724         0.621199
+4        0.051502  6.198926          1.841988   4.384430         3.870798
+...           ...       ...               ...        ...              ...
+1002002  0.677504  1.170478          3.575428   3.611179         5.006322
+1002003  0.655830  1.582567          3.389459   4.103114         5.464242
+1002004  0.110286  0.473442          1.349598   3.691576         6.357909
+1002005  0.037718  0.626081          1.742455   3.560687         4.770288
+1002006  0.016370  0.007839          2.933367   3.836352         4.836015
+
+[1002007 rows x 5 columns]
+              precision    recall  f1-score   support
+
+           0       0.48      1.00      0.65     41043
+           1       0.92      0.92      0.92    361387
+           2       1.00      0.90      0.95    450146
+           3       1.00      1.00      1.00    133473
+           4       0.88      0.93      0.90     10224
+           5       0.99      0.97      0.98      5734
+
+    accuracy                           0.92   1002007
+   macro avg       0.88      0.95      0.90   1002007
+weighted avg       0.95      0.92      0.93   1002007

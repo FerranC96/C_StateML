@@ -20,9 +20,9 @@ folder_name = "classRF"
 
 if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
-
+#INput dir to get train and validation data (downsampled). Second_dir for test
 input_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_Untreated_rep1" #Contains normalised data(no need to splitby)
-second_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_10ng"
+second_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_Untreated_rep2"
 # second_dir = input_dir
 output_dir = f"./output/{folder_name}"
 
