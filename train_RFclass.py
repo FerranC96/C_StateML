@@ -7,32 +7,34 @@ import json
 # import magic
 import tasklogger
 from sklearn import metrics
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.model_selection import KFold, train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.tree import export_text
 from joblib import dump
 from aux import *
 import seaborn as sns; sns.set()
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~CONFIG~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~I/O~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 folder_name = "classRF"
 
 if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
 
-    
 input_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_Untreated_rep1" #Contains normalised data(no need to splitby)
 second_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_10ng"
-# second_dir = "../D_CommonDatasets/C_Fig2/States" #Shoudl eb same as above unless testing
+# second_dir = input_dir
 output_dir = f"./output/{folder_name}"
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 info_run =  input("Write RF info run (using no spaces!): ")
-
 if os.path.isdir(f"{output_dir}/TRAINING_{info_run}") == True:
     print("THIS INFO RUN HAS ALREADY BEEN USED. BE aware of overwritting data")
 else:
     os.makedirs(f"{output_dir}/TRAINING_{info_run}")
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+
+#~~~~~~~~~~~~~~~~~~~~~Prepare TRAIN and validation data~~~~~~~~~~~~~~~~~~~~#
 filelist = [f for f in os.listdir(input_dir) if f.endswith(".txt")]
 if len(filelist) == 0:
     sys.exit(f"ERROR: There are no .txt files in {input_dir}!")
@@ -42,46 +44,18 @@ for i in filelist:
     print (i)
 
 cols = read_marker_csv(input_dir)
-cols.append("cell-state_num") #Later on cell-state_num
+cols.append("cell-state_num") #Add cell state to cols to keep
 
-concat = pd.DataFrame()
-#Add counter to keep track of the number of files in input -> 
-# -> cell ID will be a mix of these (Filenumber | filename.txt)
-fcounter = 0
-for file in filelist:
-    name = file.split('.txt')[0]
-    fcounter += 1
-    df = pd.read_csv(f"{input_dir}/{file}", sep = '\t')
-    df["file_origin"] = str(fcounter)+" | "+ file # add a new column of 'file_origin' that will be used to separate each file after umap calculation
-    df["Sample_ID-Cell_Index"] = df["Cell_Index"].apply(
-                                    lambda x: str(fcounter)+"-"+str(x)) #File+ID #This way the cell-index will be preserved after Cytobank upload
-    #ADD CELLstate info when files are named XXXX.CellState_Phase.txt. Naming from CygNALs 6-c.py
-    if "Apoptosis.txt" in file:
-        df["cell-state"] = "apoptosis"
-        df["cell-state_num"] = "0"
-    elif "G0.txt" in file:
-        df["cell-state"] = "g0"
-        df["cell-state_num"] = "1"
-    elif "G1.txt" in file:
-        df["cell-state"] = "g1"
-        df["cell-state_num"] = "2"
-    elif "S_Phase.txt" in file:
-        df["cell-state"] = "s-phase"
-        df["cell-state_num"] = "3"
-    elif "G2.txt" in file:
-        df["cell-state"] = "g2"
-        df["cell-state_num"] = "4"
-    elif "M_Phase.txt" in file:
-        df["cell-state"] = "m-phase"
-        df["cell-state_num"] = "5"
-    else:
-        print(f"File {file} could not be assigned to a cell state. Check your file names!")
 
-    concat = concat.append(df, ignore_index=True)
 
-# print("Concatenating...")
-# concat.to_csv(f'{output_dir}/concat_{info_run}.txt', index = False, sep = '\t')
-# print(f"Concatenated file saved as:\nconcat_{info_run}.txt")
+concat = label_concatenate(filelist, input_dir)
+
+save_concat = yes_or_NO("Save input df concat as one with cell state info columns?")
+if save_concat:
+    print("Concatenating...")
+    concat.to_csv(f"{output_dir}/TRAINING_{info_run}/{info_run}_concatIN.txt", 
+                    index = False, sep = '\t')
+    print(f"Concatenated file saved as:\n{info_run}_concatIN.txt")
 
 #Sanity check for presence of cell-state columns:
 if "cell-state" not in concat.columns:
@@ -89,46 +63,56 @@ if "cell-state" not in concat.columns:
     
 
 #Downsampling section
-
 print ("Downsampling taking place. Check output folder for more info")
 print (concat["cell-state_num"].value_counts())
-dwns_concat = downsample_data(concat, "cell-state_num",f"{info_run}_downs_b4_RF", f"{output_dir}/TRAINING_{info_run}")
+dwns_concat = downsample_data(concat, f"{info_run}_downs_b4_RF", 
+                f"{output_dir}/TRAINING_{info_run}", 
+                split_bycol="cell-state_num")
 print (dwns_concat["cell-state_num"].value_counts())
-
-# print(dwns_concat.head)
-
-###################################################################
 
 processed_df = dwns_concat[cols].copy()
 # print(processed_df)
 
+
+#~~~~~~~~~~~~~~~~~~~~~TRAIN Random Forest~~~~~~~~~~~~~~~~~~~~#
 y = processed_df["cell-state_num"]
 X = processed_df.drop("cell-state_num", axis=1)
 
 #Denoise input training data with MAGIC
 # print(X.head())
-# with tasklogger.log_task("monocore"):
+# with tasklogger.log_task("ALLbut2"):
 #     magic_op = magic.MAGIC(knn=5, n_jobs=-2)
 #     X_denoised = magic_op.fit_transform(X)
 # print(X_denoised)
 # X = X_denoised
-
-#New X to drop @uninmportnat@ features/PTMs
-# X = processed_df.drop(["cell-state_num","156Gd_pNF-kB p65","160Gd_pAMPKa","141Pr_pPDPK1","165Ho_Beta-Catenin_Active","153Eu_pCREB","147Sm_pBTK","170Er_pMEK1_2","148Nd_pSRC","168Er_pSMAD2_3","167Er_pERK1_2","163Dy_pP90RSK","157Gd_pMKK3_MKK6","154Sm_pSMAD1_5_9","166Er_pGSK3b","172Yb_pS6","155Gd_pAKT S473"], axis=1)
 
 X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.05)
 print (X_train.shape, y_train.shape)
 print (X_valid.shape, y_valid.shape)
 
 
-# clf = RandomForestRegressor(n_estimators=120, max_depth=None,
-#                                 random_state=0, n_jobs=12)
 clf = RandomForestClassifier(n_estimators=420, max_depth=None,
                                 random_state=0, n_jobs=8) 
 
+#Standard RF on whole train
 model_RFreg = clf.fit(X_train, y_train)
 
+#Use train for RF and then validation for sigmoid callibration
+# model_RFreg = clf.fit(X_train, y_train)
+clf_probs = clf.predict_proba(X_valid)
+sig_clf = CalibratedClassifierCV(clf, method="sigmoid", cv="prefit")
+sigmodel_RFreg = sig_clf.fit(X_valid, y_valid)
+
+
+#Predictions from model and CV scores
 predictions = clf.predict(X_valid)
+
+print("Cross validation scores (mean and 95% CI):")
+cv_scores = cross_val_score(model_RFreg, X, y)
+print(f"Accuracy: {cv_scores.mean()} (+/- {cv_scores.std()*2})")
+
+
+#~~~~~~~~~~~~~~~~~~~~~TRAIN model features~~~~~~~~~~~~~~~~~~~~#
 
 importances = model_RFreg.feature_importances_
 std = np.std([tree.feature_importances_ for tree in model_RFreg.estimators_], axis=0)
@@ -164,8 +148,7 @@ print("DEPRECATED SCRIPT. Used to generate the RF cycle classifier models")
 # processed_alldf = concat[cols].copy()
 
 
-##############################################
-#TEST DATA
+#~~~~~~~~~~~~~~~~~~~~~Prepare TEST data~~~~~~~~~~~~~~~~~~~~#
 
 filelist2 = [f for f in os.listdir(second_dir) if f.endswith(".txt")]
 if len(filelist2) == 0:
@@ -175,42 +158,11 @@ print ("Input files in second_dir:")
 for i in filelist2:
     print (i)
 
-test_df = pd.DataFrame()
-#Add counter to keep track of the number of files in input -> 
-# -> cell ID will be a mix of these (Filenumber | filename.txt)
-fcounter = 0
-for file in filelist2:
-    name = file.split('.txt')[0]
-    fcounter += 1
-    df = pd.read_csv(f"{second_dir}/{file}", sep = '\t')
-    df["file_origin"] = str(fcounter)+" | "+ file # add a new column of 'file_origin' that will be used to separate each file after umap calculation
-    df["Sample_ID-Cell_Index"] = df["Cell_Index"].apply(
-                                    lambda x: str(fcounter)+"-"+str(x)) #File+ID #This way the cell-index will be preserved after Cytobank upload
-    #ADD CELLstate info when files are named XXXX.CellState_Phase.txt. Naming from CygNALs 6-c.py
-    if "Apoptosis.txt" in file:
-        df["cell-state"] = "apoptosis"
-        df["cell-state_num"] = "0"
-    elif "G0.txt" in file:
-        df["cell-state"] = "g0"
-        df["cell-state_num"] = "1"
-    elif "G1.txt" in file:
-        df["cell-state"] = "g1"
-        df["cell-state_num"] = "2"
-    elif "S_Phase.txt" in file:
-        df["cell-state"] = "s-phase"
-        df["cell-state_num"] = "3"
-    elif "G2.txt" in file:
-        df["cell-state"] = "g2"
-        df["cell-state_num"] = "4"
-    elif "M_Phase.txt" in file:
-        df["cell-state"] = "m-phase"
-        df["cell-state_num"] = "5"
-    else:
-        print(f"File {file} could not be assigned to a cell state. Check your file names!")
-
-    test_df = test_df.append(df, ignore_index=True)
+test_df = label_concatenate(filelist2, second_dir)
 
 test_df = test_df[cols] #Must use shared collumns bwten train and test data
+
+#~~~~~~~~~~~~~~~~~~~~~TEST Random Forest~~~~~~~~~~~~~~~~~~~~#
 
 y_test = test_df["cell-state_num"]
 X_test = test_df.drop("cell-state_num", axis=1)
@@ -233,18 +185,32 @@ predict_test = clf.predict(X_test)
 #                     index = False)
 #Using the downsampled concatenated input as train (balanced states) the accurtacy score when testing all data goes down signficantly to just 50%
 
+print("Cross validation scores for test data (mean and 95% CI):")
+cv_scores_test = cross_val_score(model_RFreg, X_test, y_test)
+print(f"Accuracy: {cv_scores_test.mean()} (+/- {cv_scores_test.std()*2})")
+
+
+#~~~~~~~~~~~~~~~~~~~~~TEST/validation metrics and plots~~~~~~~~~~~~~~~~~~~~#
+
 # print (metrics.r2_score(y_test, predictions))
 print ("Score agains validation data", model_RFreg.score(X_valid, y_valid))
 print(metrics.classification_report(predictions,y_valid))
-json.dump(metrics.classification_report(predictions,y_valid, output_dict=True), open(f"{output_dir}/TRAINING_{info_run}/{info_run}_ClassReport_VALIDdata_{model_RFreg.score(X_valid, y_valid)}.json", "w"))
+json.dump(metrics.classification_report(predictions,y_valid, output_dict=True), 
+            open(f"{output_dir}/TRAINING_{info_run}/{info_run}_ClassReport_VALIDdata_{model_RFreg.score(X_valid, y_valid)}.json", "w"))
 print ("Predictions on test data: ", model_RFreg.score(X_test, y_test))
 print(metrics.classification_report(predict_test,y_test))
-json.dump(metrics.classification_report(predict_test,y_test, output_dict=True), open(f"{output_dir}/TRAINING_{info_run}/{info_run}_ClassReport_TESTdata_{model_RFreg.score(X_test, y_test)}.json", "w"))
+json.dump(metrics.classification_report(predict_test,y_test, output_dict=True), 
+            open(f"{output_dir}/TRAINING_{info_run}/{info_run}_ClassReport_TESTdata_{model_RFreg.score(X_test, y_test)}.json", "w"))
 
 #Log loss:
 logloss_score = metrics.log_loss(y_test, clf.predict_proba(X_test))
 print("Log loss score is:", logloss_score)
 
+###########
+print(metrics.classification_report(sig_clf.predict(X_test),y_test))
+logloss_score = metrics.log_loss(y_test, sig_clf.predict_proba(X_test))
+print("Log loss score for sigmoid is:", logloss_score)
+############
 
 #Confussion matrices
 
@@ -305,15 +271,3 @@ export_graphviz(estimator, out_file=f"{output_dir}/TRAINING_{info_run}/{info_run
 # # plt.show()
 
 
-# kf = KFold(n_splits=5) # Define the split - into 2 folds
-# kf.get_n_splits(X) # returns the number of splitting iterations in the cross-validator
-# print (kf)
-# for train_index, test_index in kf.split(X):
-#     print ("TRAIN:", train_index, "TEST:", test_index)
-# #  X_train, X_test = X[train_index], X[test_index]
-# #  y_train, y_test = y[train_index], y[test_index]('TRAIN:', array([2, 3]), 'TEST:', array([0, 1]))
-# # ('TRAIN:', array([0, 1]), 'TEST:', array([2, 3]))
-
-
-    # f_reduced.to_csv(f"{output_dir}/{i}", index = False, sep = '\t') s
-        # index = False to be compatible with Cytobank    
