@@ -9,74 +9,176 @@ import tasklogger
 from sklearn import metrics
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.model_selection import KFold, train_test_split, cross_val_score
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import export_text
 from joblib import dump
 from aux import *
 import seaborn as sns; sns.set()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~I/O~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-folder_name = "classRF"
+folder_name = "trainRF"
 
 if os.path.isdir(f"./output/{folder_name}") == False:
     os.makedirs(f"./output/{folder_name}")
-#INput dir to get train and validation data (downsampled). Second_dir for test
-input_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_Untreated_rep1" #Contains normalised data(no need to splitby)
-second_dir = "../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_Untreated_rep2"
+#INput dir to get train and validation data (downsampled). Second_dir for test2
+train_dir = "../D_CyTOF/C_Fig4Time/States" #using timepoint data from SI orgs NatMethods Fig4
+test2_dir = "../D_CyTOF/CRC-TME/Epithelial-Cells" #Test against colon organoids from natmethods Fig5
 # second_dir = input_dir
 output_dir = f"./output/{folder_name}"
 
 info_run =  input("Write RF info run (using no spaces!): ")
-if os.path.isdir(f"{output_dir}/TRAINING_{info_run}") == True:
-    print("THIS INFO RUN HAS ALREADY BEEN USED. BE aware of overwritting data")
+if os.path.isdir(f"{output_dir}/{info_run}") == True:
+    print("THIS INFO RUN HAS ALREADY BEEN USED. Be aware of overwritting data")
+    # sys.exit("CLOSING! Uncomment line if you want to procede")
 else:
-    os.makedirs(f"{output_dir}/TRAINING_{info_run}")
+    os.makedirs(f"{output_dir}/{info_run}")
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 
 #~~~~~~~~~~~~~~~~~~~~~Prepare TRAIN and validation data~~~~~~~~~~~~~~~~~~~~#
-filelist = [f for f in os.listdir(input_dir) if f.endswith(".txt")]
-if len(filelist) == 0:
-    sys.exit(f"ERROR: There are no .txt files in {input_dir}!")
-#Check the files found in the directory:
-print ("Input files in input_dir:")
-for i in filelist:
-    print (i)
 
-cols = read_marker_csv(input_dir)
+#TURN INTO A FUCNITON INCORPORATING CELL SATES LABEL FISHING FFROM FILENAMES
+dTrain = pd.DataFrame()
+
+filelist = [f for f in os.listdir(train_dir) if f.endswith(".txt")]
+print ("Input files:")
+if len(filelist) ==1:
+    print("Only one")
+    print (filelist[0])
+    df = pd.read_csv(f"{train_dir}/{filelist[0]}", sep = "\t")#change to "," asap
+    if "cell-state_num" not in df.columns:
+        sys.exit("ERROR: NO CELL STATE INFO (missing column called 'cell-state_num')")
+    dTrain = pd.concat([dTrain, df], ignore_index=True)
+elif len(filelist)>1:
+    print(f"{len(filelist)} files:")
+    fcounter = 0
+    for i in filelist: #TODO: Update with newer snippets from CyGNAL
+        print (i)
+        name = i.split('.txt')[0]
+        fcounter += 1
+        df = pd.read_csv(f"{train_dir}/{i}", sep = "\t")
+        df["file_origin_trainRFcs"] = str(fcounter)+"_|_"+ name
+        # df["Sample_ID-Cell_Index"] = df["Cell_Index"].apply(
+        #                                 lambda x: str(fcounter)+"-"+str(x))
+        if "cell-state_num" not in df.columns:
+            print("Train data missing cell state information. Trying to label if info present in file name")
+            if "apoptosis" in i.lower():
+                df["cell-state"] = "apoptosis"
+                df["cell-state_num"] = "0"
+            elif "g0" in i.lower():
+                df["cell-state"] = "g0"
+                df["cell-state_num"] = "1"
+            elif "g1" in i.lower():
+                df["cell-state"] = "g1"
+                df["cell-state_num"] = "2"
+            elif "s-phase" or "s_phase" in i.lower():
+                df["cell-state"] = "s-phase"
+                df["cell-state_num"] = "3"
+            elif "g2" in i.lower():
+                df["cell-state"] = "g2"
+                df["cell-state_num"] = "4"
+            elif "m-phase" or "m_phase" in i.lower():
+                df["cell-state"] = "m-phase"
+                df["cell-state_num"] = "5"
+            else:
+                print(f"ERROR: File {i} could not be assigned to a cell state. Check your file names!")
+        dTrain = pd.concat([dTrain, df], ignore_index=True)
+else:
+    sys.exit(f"ERROR: There are no .txt files in {train_dir}!")
+
+
+#Abs to use
+cols = read_marker_csv(train_dir)
+#Ensure AB names have no spaces!:
+cols = [i.replace(" ","_") for i in cols]
 cols.append("cell-state_num") #Add cell state to cols to keep
 
+# #DEPRECATED
+# concat = label_concatenate(filelist, input_dir)
 
+# save_concat = yes_or_NO("Save input df concat as one with cell state info columns?")
+# if save_concat:
+#     print("Concatenating...")
+#     concat.to_csv(f"{output_dir}/TRAINING_{info_run}/{info_run}_concatIN.csv", 
+#                     index = False, sep = '\t')
+#     print(f"Concatenated file saved as:\n{info_run}_concatIN.csv")
 
-concat = label_concatenate(filelist, input_dir)
-
-save_concat = yes_or_NO("Save input df concat as one with cell state info columns?")
-if save_concat:
-    print("Concatenating...")
-    concat.to_csv(f"{output_dir}/TRAINING_{info_run}/{info_run}_concatIN.txt", 
-                    index = False, sep = '\t')
-    print(f"Concatenated file saved as:\n{info_run}_concatIN.txt")
 
 #Sanity check for presence of cell-state columns:
-if "cell-state" not in concat.columns:
-    sys.exit("No cell state INFO!!!")
+if "cell-state" not in dTrain.columns:
+    sys.exit("ERROR: NO CELL STATE INFO (missing column called 'cell-state_num')")
     
 
 #Downsampling section
-print ("Downsampling taking place. Check output folder for more info")
-print (concat["cell-state_num"].value_counts())
-dwns_concat = downsample_data(concat, f"{info_run}_downs_b4_RF", 
-                f"{output_dir}/TRAINING_{info_run}", 
+if df.equals(dTrain["cell-state_num"].value_counts()):
+    print("JACK-POT! Downsampling to balance classes not required")
+    dTrain_dwnsBalanced = dTrain
+else:
+    print ("Downsampling taking place. Check output folder for more info")
+    print (dTrain["cell-state_num"].value_counts())
+    dTrain_dwnsBalanced = downsample_data(dTrain, f"dwnsBalanced_b4_RF", 
+                f"{output_dir}/{info_run}", 
                 split_bycol="cell-state_num")
-print (dwns_concat["cell-state_num"].value_counts())
 
-processed_df = dwns_concat[cols].copy()
-# print(processed_df)
+print (dTrain_dwnsBalanced["cell-state_num"].value_counts())
+
+#Translation section: Not strcilty needed as panel markers should have been 
+# generated with this datasets
+
+dTrain_dwnsBalanced.columns = [i.replace(" ","_") for i in dTrain_dwnsBalanced.columns]
+
+#TRANSLATION -> needs to become a function ASAP
+translation = {} #Translation layer needed since it's uncommon for names to be exact matches.
+
+for i in dTrain_dwnsBalanced.columns:
+    if i in cols:
+        print("Exact match")
+        print (i)
+        translation[i] = i
+    else:
+        for i2 in cols:
+            try:
+                if i.split("_")[1] in i2.split("_")[1]:
+                    if "".join(i.split("_")[1:3]) == "".join(i2.split("_")[1:3]):
+                        #grabing [1:] only works if no version to Ab. Better to grab [1:3], as it should grab just Ab name and PTM site
+                        print("Same marker, different channel/version")
+                        print("from model", i2)
+                        print("from input data", i)
+                        translation[i] = i2
+                    elif len(i2.split("_")) == 2: #Marker with only isotope and AbNAME
+                        print("Marker with shorter name in input")
+                        print("from model", i2)
+                        print("from input data", i)
+                        translation[i] = i2
+                    elif len(i.split("_")) == 2: #Marker with only isotope and AbNAME
+                        print("Marker with shorter name in model")
+                        print("from model", i2)
+                        print("from input data", i)
+                        translation[i] = i2
+            except:
+                pass
+print(translation)
+
+if len(translation) != len(cols):
+    sys.exit(f"ERROR: Missing model features in {filelist[0]}!")
+    #IN the future intead of sys.exit warn user and try to use the minimal 5 marker model.
+
+
+dTrain_dwnsBalanced = dTrain_dwnsBalanced.rename(columns=translation)
+dTrain_dwnsBalanced = dTrain_dwnsBalanced.drop(columns=np.setdiff1d(dTrain_dwnsBalanced.columns, cols))
+dTrain_dwnsBalanced
+
+
+#Section to check if data has been arcsinh trasnformed:
+if dTrain_dwnsBalanced.max().max() > 12:
+    print("WARNING! IS YOUR DATA NORMALISED? \n CyTOF data is generally normalised using arcsinh(a=5), and it seems like your data might not have been normalised.")
+    #Eventually have some code to prompt the user to normalise it here if wanted
+
 
 
 #~~~~~~~~~~~~~~~~~~~~~TRAIN Random Forest~~~~~~~~~~~~~~~~~~~~#
-y = processed_df["cell-state_num"]
-X = processed_df.drop("cell-state_num", axis=1)
+Y = dTrain_dwnsBalanced["cell-state_num"]
+X = dTrain_dwnsBalanced.drop("cell-state_num", axis=1)
 
 #Denoise input training data with MAGIC
 # print(X.head())
@@ -86,50 +188,84 @@ X = processed_df.drop("cell-state_num", axis=1)
 # print(X_denoised)
 # X = X_denoised
 
-X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.05)
-print (X_train.shape, y_train.shape)
-print (X_valid.shape, y_valid.shape)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.05)
+print (X_train.shape, Y_train.shape)
+print (X_test.shape, Y_test.shape)
+X_train, X_valid, Y_train, Y_valid = train_test_split(X_train, Y_train, test_size=0.12)
+print (X_train.shape, Y_train.shape)
+print (X_valid.shape, Y_valid.shape)
 
 
-clf = RandomForestClassifier(n_estimators=420, max_depth=None,
-                                random_state=0, n_jobs=8) 
+mRF = RandomForestClassifier(n_estimators=420, 
+                            max_features="sqrt", 
+                            max_depth=None, min_samples_split=2,
+                            random_state=12, oob_score=True,
+                            n_jobs=-3)  
 
-#Standard RF on whole train
-model_RFreg = clf.fit(X_train, y_train)
+mRF.fit(X_train, Y_train)
+mRFcal = CalibratedClassifierCV(mRF, method="sigmoid", cv="prefit")
+mRFcal.fit(X_valid, Y_valid)
 
-#Use train for RF and then validation for sigmoid callibration
+mRF_probs = mRF.predict_proba(X_test)
+mRFcal_probs = mRFcal.predict_proba(X_test)
+
+mRF_preds = mRF.predict(X_test)
+mRFcal_preds = mRFcal.predict(X_test)
+
+mRF_cvscores = cross_val_score(mRF, X, Y)
+print(f"CV score of base model: {mRF_cvscores.mean()} (+/- {mRF_cvscores.std()*2})")
+
+print(metrics.classification_report(mRF_preds,Y_test))
+print(metrics.classification_report(mRFcal_preds,Y_test))
+
+
+
+#OLD
+# #Standard RF on whole train
 # model_RFreg = clf.fit(X_train, y_train)
-clf_probs = clf.predict_proba(X_valid)
-sig_clf = CalibratedClassifierCV(clf, method="sigmoid", cv="prefit")
-sigmodel_RFreg = sig_clf.fit(X_valid, y_valid)
+
+# #Use train for RF and then validation for sigmoid callibration
+# # model_RFreg = clf.fit(X_train, y_train)
+# clf_probs = clf.predict_proba(X_valid)
+# sig_clf = CalibratedClassifierCV(clf, method="sigmoid", cv="prefit")
+# sigmodel_RFreg = sig_clf.fit(X_valid, y_valid)
 
 
-#Predictions from model and CV scores
-predictions = clf.predict(X_valid)
+# #Predictions from model and CV scores
+# predictions = clf.predict(X_valid)
 
-print("Cross validation scores (mean and 95% CI):")
-cv_scores = cross_val_score(model_RFreg, X, y)
-print(f"Accuracy: {cv_scores.mean()} (+/- {cv_scores.std()*2})")
+# print("Cross validation scores (mean and 95% CI):")
+# cv_scores = cross_val_score(model_RFreg, X, y)
+# print(f"Accuracy: {cv_scores.mean()} (+/- {cv_scores.std()*2})")
+
+
+
 
 
 #~~~~~~~~~~~~~~~~~~~~~TRAIN model features~~~~~~~~~~~~~~~~~~~~#
+#Instead of accessing mRF and mRFcal separately, we can acces mRF within mRF cal
+print(mRFcal.base_estimator)
+print(mRFcal)
+mRF_feats = mRFcal.base_estimator.feature_names_in_
+mRFcal_feats = mRFcal.feature_names_in_
 
-importances = model_RFreg.feature_importances_
-std = np.std([tree.feature_importances_ for tree in model_RFreg.estimators_], axis=0)
-indices = np.argsort(importances)[::-1]
+mRF_import = mRFcal.base_estimator.feature_importances_ 
+importstd = np.std([tree.feature_importances_ for tree in mRFcal.base_estimator.estimators_], axis=0)
+feat_index = np.argsort(mRF_import)[::-1]
 # Print the feature ranking
-print("Feature ranking:")
-for f in range(X_train.shape[1]):
-    print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]), " -> " , X.columns[indices[f]])
-
+print("Feature importance ranking:")
+for i in feat_index:
+    print(f"Feature {i} ({mRFcal_feats[i]}) -> {mRF_import[i]}")
+# for f in range(X_train.shape[1]):
+#     print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]), " -> " , X.columns[indices[f]])
 
 plt.figure()
-plt.title("Feature importances")
-plt.bar(range(X.shape[1]), importances[indices],
-        color="r", yerr=std[indices], align="center")
-plt.xticks(range(X.shape[1]), X.columns[indices], rotation="vertical")
-plt.xlim([-1, X.shape[1]])
-plt.savefig(f"{output_dir}/TRAINING_{info_run}/{info_run}_feature_importances.png", bbox_inches = "tight")
+plt.title("Feature importance plot")
+plt.bar(range(len(mRFcal_feats)), mRF_import[feat_index],
+        color="r", yerr=importstd[feat_index], align="center")
+plt.xticks(range(len(mRFcal_feats)), mRFcal_feats[feat_index], rotation="vertical")
+plt.xlim([-1, len(mRFcal_feats)])
+plt.savefig(f"{output_dir}/{info_run}/{info_run}_feature_importances.png", bbox_inches = "tight")
 
 # plt.figure()
 # plt.title("Prediction vs Real")
@@ -141,7 +277,7 @@ plt.savefig(f"{output_dir}/TRAINING_{info_run}/{info_run}_feature_importances.pn
 # plt.savefig(f"{output_dir}/TRAINING_{info_run}/{info_run}_pred_vs_real.png")
 
 #Alternative to pickle that works better when storing large numpy arrays!
-dump(clf, f"{output_dir}/TRAINING_{info_run}/{info_run}_RFcclass.joblib")
+dump(mRFcal, f"{output_dir}/{info_run}/{info_run}_RFcclass.joblib")
 print("DEPRECATED SCRIPT. Used to generate the RF cycle classifier models") 
 
 #Get non-downs data
@@ -149,6 +285,8 @@ print("DEPRECATED SCRIPT. Used to generate the RF cycle classifier models")
 
 
 #~~~~~~~~~~~~~~~~~~~~~Prepare TEST data~~~~~~~~~~~~~~~~~~~~#
+#UPDATE BELOW WITH NEW FORMAT AND FUNCTIONS
+print(test2_dir)
 
 filelist2 = [f for f in os.listdir(second_dir) if f.endswith(".txt")]
 if len(filelist2) == 0:
@@ -161,6 +299,10 @@ for i in filelist2:
 test_df = label_concatenate(filelist2, second_dir)
 
 test_df = test_df[cols] #Must use shared collumns bwten train and test data
+
+
+
+
 
 #~~~~~~~~~~~~~~~~~~~~~TEST Random Forest~~~~~~~~~~~~~~~~~~~~#
 

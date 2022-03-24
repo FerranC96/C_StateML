@@ -1,0 +1,73 @@
+Write RF info run (using no spaces!): PDO21_UNTrep1_sPnoPARP_t10ng
+Input files in input_dir:
+Pro_arcsinhTRANSF_20200109__EGF__Test__P21_0ng_1.G0.txt
+Pro_arcsinhTRANSF_20200109__EGF__Test__P21_0ng_1.Apoptosis.txt
+Pro_arcsinhTRANSF_20200109__EGF__Test__P21_0ng_1.S_Phase.txt
+Pro_arcsinhTRANSF_20200109__EGF__Test__P21_0ng_1.G1.txt
+Pro_arcsinhTRANSF_20200109__EGF__Test__P21_0ng_1.G2.txt
+Pro_arcsinhTRANSF_20200109__EGF__Test__P21_0ng_1.M_Phase.txt
+Downsampling taking place. Check output folder for more info
+2    13512
+4    11055
+3     8986
+0     5998
+1     2267
+5      293
+Name: cell-state_num, dtype: int64
+Working with  293  cells per file_origin
+5    293
+2    293
+3    293
+1    293
+0    293
+4    293
+Name: cell-state_num, dtype: int64
+(1670, 9) (1670,)
+(88, 9) (88,)
+Feature ranking:
+1. feature 4 (0.202589)  ->  150Nd_pRB_S807_S811_v2
+2. feature 1 (0.190793)  ->  127I_IdU
+3. feature 8 (0.157017)  ->  176Yb_Cyclin_B1_2_v2
+4. feature 2 (0.136798)  ->  142Nd_cCaspase_3_D175_v3
+5. feature 0 (0.126345)  ->  89Y_pHH3_S28
+6. feature 6 (0.069820)  ->  158Gd_pP38_T180_Y182
+7. feature 5 (0.065566)  ->  152Sm_pAKT_T308_v6
+8. feature 7 (0.029851)  ->  169Tm_PLK1
+9. feature 3 (0.021221)  ->  143Nd_Geminin
+DEPRECATED SCRIPT. Used to generate the RF cycle classifier models
+Input files in second_dir:
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G1.txt
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.S_Phase.txt
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G0.txt
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.Apoptosis.txt
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.M_Phase.txt
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G2.txt
+Score agains validation data 0.9772727272727273
+              precision    recall  f1-score   support
+
+           0       0.82      1.00      0.90         9
+           1       1.00      0.85      0.92        13
+           2       1.00      1.00      1.00        10
+           3       1.00      1.00      1.00        19
+           4       1.00      1.00      1.00        14
+           5       1.00      1.00      1.00        23
+
+    accuracy                           0.98        88
+   macro avg       0.97      0.97      0.97        88
+weighted avg       0.98      0.98      0.98        88
+
+Predictions on test data:  0.9882943143812709
+              precision    recall  f1-score   support
+
+           0       0.93      0.97      0.95      4997
+           1       0.93      0.82      0.87      1991
+           2       1.00      1.00      1.00     13407
+           3       1.00      1.00      1.00     11426
+           4       1.00      1.00      1.00     14400
+           5       1.00      0.90      0.95       423
+
+    accuracy                           0.99     46644
+   macro avg       0.98      0.95      0.96     46644
+weighted avg       0.99      0.99      0.99     46644
+
+Log loss score is: 0.06732934326552391

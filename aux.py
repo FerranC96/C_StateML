@@ -31,6 +31,7 @@ def arcsinh_transf(cofactor, no_arc):
     return arc, cols
 
 #Downsample dataframe by column and save to file which IDs were removed
+#UPDATED IN 2022 to drop unused cell0state_num level after groupby
 def downsample_data(no_arc, info_run, output_dir, 
                     split_bycol="file_identifier"): 
     downsampled_dframe = no_arc.copy()
@@ -39,8 +40,10 @@ def downsample_data(no_arc, info_run, output_dir,
     print ("Working with ", downsample_size, " cells per split")
     #Group by file+origin and sample without replacement -> 
     # thus we can sample file for which len(file)=N without -tive consequences 
-    reduced_df = downsampled_dframe.groupby(split_bycol).apply(lambda x:
-                                                    x.sample(downsample_size))
+    reduced_df = downsampled_dframe.groupby(split_bycol, 
+                                            as_index=False).apply(lambda x:
+                                                    x.sample(downsample_size)
+                                                                ).droplevel(0)
     # reduced_df['new-cell-index'] = list(range(len(reduced_df.index)))
     # reduced_df['post_downsample-cell_index'] = reduced_df.index
     
