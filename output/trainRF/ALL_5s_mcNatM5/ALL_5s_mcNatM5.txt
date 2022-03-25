@@ -1,0 +1,148 @@
+Train directory:  ../D_CyTOF/CRC-TME/ALLcells
+Input files:
+(36 files)
+arcsinhTRANSF_WT-organoids-fibroblasts-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts-macrophages_fibroblast_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts_fibroblast_w-cell-state.txt
+arcsinhTRANSF_macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts_fibroblast_w-cell-state.txt
+arcsinhTRANSF_fibroblasts-macrophages_fibroblast_w-cell-state.txt
+arcsinhTRANSF_fibroblasts-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts-macrophages_fibroblast_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts-macrophages_fibroblast_w-cell-state.txt
+arcsinhTRANSF_WT-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts_fibroblast_w-cell-state.txt
+arcsinhTRANSF_A-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts-macrophages_fibroblast_w-cell-state.txt
+arcsinhTRANSF_A-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_fibroblasts_fibroblast_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-macrophages_macrophage_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts_fibroblast_w-cell-state.txt
+arcsinhTRANSF_AK-organoids_epithelial-cell_w-cell-state.txt
+Downsampling taking place. Check output folder for more info
+2    248803
+3    192391
+4    175700
+1    156654
+0     53907
+5     11136
+Name: cell-state_num, dtype: int64
+Working with  11136  cells per split
+0    11136
+1    11136
+2    11136
+3    11136
+4    11136
+5    11136
+Name: cell-state_num, dtype: int64
+Exact match
+89Y_pHH3
+Exact match
+127I_IdU
+Exact match
+142Nd_cCaspase_3
+Exact match
+150Nd_pRB
+Exact match
+176Yb_Cyclin_B1
+Exact match
+cell-state_num
+(63475, 5) (63475,)
+(3341, 5) (3341,)
+(55858, 5) (55858,)
+(7617, 5) (7617,)
+(Are the) base and calibrated model predictions equal(?) True
+CV score of base model: 0.9999700677217376 (+/- 7.3318808667471e-05)
+RandomForestClassifier(max_features='sqrt', n_estimators=420, n_jobs=-3,
+                       oob_score=True, random_state=12)
+CalibratedClassifierCV(base_estimator=RandomForestClassifier(max_features='sqrt',
+                                                             n_estimators=420,
+                                                             n_jobs=-3,
+                                                             oob_score=True,
+                                                             random_state=12),
+                       cv='prefit')
+Feature importance ranking:
+Feature 3 (150Nd_pRB) -> 0.2325611173643805
+Feature 1 (127I_IdU) -> 0.2117628109475848
+Feature 0 (89Y_pHH3) -> 0.20786734167187382
+Feature 2 (142Nd_cCaspase_3) -> 0.18659151963671056
+Feature 4 (176Yb_Cyclin_B1) -> 0.16121721037945033
+Test2 directory:  ../D_CyTOF/CRC-TME/Epithelial-Cells
+Input files:
+(16 files)
+arcsinhTRANSF_AK-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids_epithelial-cell_w-cell-state.txt
+Exact match
+89Y_pHH3
+Exact match
+127I_IdU
+Exact match
+142Nd_cCaspase_3
+Exact match
+150Nd_pRB
+Exact match
+176Yb_Cyclin_B1
+Exact match
+cell-state_num
+(Are the) base and calibrated model predictions equal(?) True
+Performance against test data 1.0
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00       586
+           1       1.00      1.00      1.00       524
+           2       1.00      1.00      1.00       550
+           3       1.00      1.00      1.00       544
+           4       1.00      1.00      1.00       575
+           5       1.00      1.00      1.00       562
+
+    accuracy                           1.00      3341
+   macro avg       1.00      1.00      1.00      3341
+weighted avg       1.00      1.00      1.00      3341
+
+Performance against test2 data 0.999937414959679
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     23674
+           1       1.00      1.00      1.00     69642
+           2       1.00      1.00      1.00     59371
+           3       1.00      1.00      1.00    184994
+           4       1.00      1.00      1.00     83578
+           5       1.00      1.00      1.00     10154
+
+    accuracy                           1.00    431413
+   macro avg       1.00      1.00      1.00    431413
+weighted avg       1.00      1.00      1.00    431413
+
+Log loss score is: 0.0010859616620344636

@@ -1,0 +1,117 @@
+Input files:
+(6 files)
+S-phase_subset.txt
+G1_subset.txt
+M-phase_subset.txt
+G0_subset.txt
+G2_subset.txt
+apoptosis_subset.txt
+Downsampling taking place. Check output folder for more info
+2    404601
+1    362413
+3    133575
+0     85025
+4     10778
+5      5615
+Name: cell-state_num, dtype: int64
+Working with  5615  cells per split
+0    5615
+1    5615
+2    5615
+3    5615
+4    5615
+5    5615
+Name: cell-state_num, dtype: int64
+Exact match
+89Y_pHH3
+Exact match
+127I_IdU
+Exact match
+142Nd_cCaspase_3
+Exact match
+150Nd_pRB
+Exact match
+176Yb_Cyclin_B1
+Exact match
+cell-state_num
+(32005, 5) (32005,)
+(1685, 5) (1685,)
+(28164, 5) (28164,)
+(3841, 5) (3841,)
+(Are the) base and calibrated model predictions equal(?) True
+CV score of base model: 0.9998812704066488 (+/- 0.00022212272999546105)
+RandomForestClassifier(max_features='sqrt', n_estimators=420, n_jobs=-3,
+                       oob_score=True, random_state=12)
+CalibratedClassifierCV(base_estimator=RandomForestClassifier(max_features='sqrt',
+                                                             n_estimators=420,
+                                                             n_jobs=-3,
+                                                             oob_score=True,
+                                                             random_state=12),
+                       cv='prefit')
+Feature importance ranking:
+Feature 3 (150Nd_pRB) -> 0.21032084248068553
+Feature 2 (142Nd_cCaspase_3) -> 0.20293392405712352
+Feature 1 (127I_IdU) -> 0.19801648733723162
+Feature 0 (89Y_pHH3) -> 0.19670183142533829
+Feature 4 (176Yb_Cyclin_B1) -> 0.19202691469962102
+../D_CyTOF/CRC-TME/Epithelial-Cells
+Input files:
+(16 files)
+arcsinhTRANSF_AK-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids_epithelial-cell_w-cell-state.txt
+Exact match
+89Y_pHH3
+Exact match
+127I_IdU
+Exact match
+142Nd_cCaspase_3
+Exact match
+150Nd_pRB
+Exact match
+176Yb_Cyclin_B1
+Exact match
+cell-state_num
+(Are the) base and calibrated model predictions equal(?) True
+Performance against test data 1.0
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00       292
+           1       1.00      1.00      1.00       266
+           2       1.00      1.00      1.00       270
+           3       1.00      1.00      1.00       286
+           4       1.00      1.00      1.00       297
+           5       1.00      1.00      1.00       274
+
+    accuracy                           1.00      1685
+   macro avg       1.00      1.00      1.00      1685
+weighted avg       1.00      1.00      1.00      1685
+
+Performance against test2 data 0.8931348846696785
+              precision    recall  f1-score   support
+
+           0       0.59      0.95      0.73     14713
+           1       1.00      0.72      0.84     96502
+           2       0.60      1.00      0.75     35987
+           3       0.97      1.00      0.98    178576
+           4       0.93      0.81      0.86     96000
+           5       0.95      1.00      0.97      9635
+
+    accuracy                           0.89    431413
+   macro avg       0.84      0.91      0.86    431413
+weighted avg       0.92      0.89      0.90    431413
+
+Log loss score is: 0.8073698981169579

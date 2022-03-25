@@ -1,10 +1,80 @@
 
 import os
 import sys
+from xmlrpc.client import Unmarshaller
 
 import numpy as np
 import pandas as pd
-import umap
+
+
+def readCellState(input_dir, ext=".txt" ,sep="\t"):
+    # Function to read either a dataset annotated with cell state labels or
+        # multiple files generated from the same experiment and where each file 
+        # corresponds to a cell state gate and is named accordingly in the name
+    
+    dDataFrame = pd.DataFrame()
+    filelist = [f for f in os.listdir(input_dir) if f.endswith(ext)]
+    print ("Input files:")
+    if len(filelist) ==1:
+        print("(Only one)")
+        print (filelist[0])
+        df = pd.read_csv(f"{input_dir}/{filelist[0]}", sep = sep)
+        df["Sample_ID-Cell_Index"] = df["Cell_Index"]
+        if "cell-state_num" not in df.columns:
+            sys.exit("ERROR: NO CELL STATE INFO (missing column called 'cell-state_num')")
+        dDataFrame = pd.concat([dDataFrame, df], ignore_index=True)
+    elif len(filelist)>1:
+        print(f"({len(filelist)} files)")
+        fcounter = 0
+        for i in filelist: #TODO: Update with newer snippets from CyGNAL
+            print (i)
+            name = i.split(ext)[0]
+            fcounter += 1
+            df = pd.read_csv(f"{input_dir}/{i}", sep = sep)
+            df["file_origin_RFcs"] = str(fcounter)+"_|_"+ name
+            df["Sample_ID-Cell_Index"] = df["Cell_Index"].apply(
+                                        lambda x: str(fcounter)+"-"+str(x)) #File+ID #This way the cell-index will be preserved after Cytobank upload
+            if "cell-state_num" not in df.columns:
+                print("Train data missing cell state information.",
+                "Trying to label if info present in file name")
+                if "apoptosis" in i.lower():
+                    print(i.lower())
+                    print(f"File {i} labelled as apoptosis")
+                    df["cell-state"] = "apoptosis"
+                    df["cell-state_num"] = 0
+                elif "s-phase" in i.lower() or "s_phase" in i.lower():
+                    print(i.lower())
+                    print(f"File {i} labelled as s-phase")
+                    df["cell-state"] = "s-phase"
+                    df["cell-state_num"] = 3
+                elif "m-phase" in i.lower() or "m_phase" in i.lower():
+                    print(i.lower())
+                    print(f"File {i} labelled as m-phase")
+                    df["cell-state"] = "m-phase"
+                    df["cell-state_num"] = 5
+                elif "g0" in i.lower():
+                    print(i.lower())
+                    print(f"File {i} labelled as g0")
+                    df["cell-state"] = "g0"
+                    df["cell-state_num"] = 1
+                elif "g1" in i.lower():
+                    print(i.lower())
+                    print(f"File {i} labelled as g1")
+                    df["cell-state"] = "g1"
+                    df["cell-state_num"] = 2
+                elif "g2" in i.lower():
+                    print(i.lower())
+                    print(f"File {i} labelled as g2")
+                    df["cell-state"] = "g2"
+                    df["cell-state_num"] = 4
+                else:
+                    sys.exit(f"ERROR: File {i} could not be assigned to a cell state. Check your file names!")
+            dDataFrame = pd.concat([dDataFrame, df], ignore_index=True)
+
+    else:
+        sys.exit(f"ERROR: There are no {ext} files in {input_dir}!")
+
+    return filelist,dDataFrame
 
 
 def read_marker_csv(input_dir):
@@ -16,6 +86,58 @@ def read_marker_csv(input_dir):
         selected_markers = marker_file.loc[marker_file[1] == "Y", [0]].values.tolist()
         selected_markers = [item for sublist in selected_markers for item in sublist]
     return selected_markers
+
+
+def translateAbMarkers(dataframe, marker_list):
+    translation = {} #Translation layer needed since it's uncommon for names to be exact matches.
+    unmmatched = []
+    for i in dataframe.columns:
+        if i in marker_list:
+            print("Exact match")
+            print (i)
+            translation[i] = i
+        else:
+            for i2 in marker_list:
+                try:
+                    if i.split("_")[1] in i2.split("_")[1]:
+                        if "".join(i.split("_")[1:3]) == "".join(i2.split("_")[1:3]):
+                            #grabing [1:] only works if no version to Ab. Better to grab [1:3], as it should grab just Ab name and PTM site
+                            print("Same marker, different channel/version")
+                            print("from model", i2)
+                            print("from input data", i)
+                            translation[i] = i2
+                        elif len(i2.split("_")) == 2: #Marker with only isotope and AbNAME
+                            print("Marker with shorter name in input")
+                            print("from model", i2)
+                            print("from input data", i)
+                            translation[i] = i2
+                        elif len(i.split("_")) == 2: #Marker with only isotope and AbNAME
+                            print("Marker with shorter name in model Ab list")
+                            print("from model", i2)
+                            print("from input data", i)
+                            translation[i] = i2
+                        elif "".join(i.split("_")[1]) == "".join(i2.split("_")[1]): #Fuzziest of matches
+                            print("WARNING: Fuzzy match! Please manually check")
+                            print("from model", i2)
+                            print("from input data", i)
+                            translation[i] = i2
+                        else:
+                            print("ERROR: UNABLE TO PROPERLY MATCH!",i2, i)
+                            unmmatched.append(i2)
+                except:
+                    pass
+    if len(translation) != len(marker_list):
+        print("Translated markers",translation)
+        print("Unmatched markers", unmmatched)
+        print("Model markers", marker_list)
+        for i in marker_list:
+            if i not in translation.values():
+                print(f"ERROR: Missing the following model feature in input data \n {i}")
+        sys.exit(f"ERROR: Missing model features in input data!")
+        #IN the future intead of sys.exit warn user and try to use the minimal 5 marker model.
+    dataframe = dataframe.rename(columns=translation)
+    
+    return dataframe
 
 
 def arcsinh_transf(cofactor, no_arc):
@@ -44,12 +166,10 @@ def downsample_data(no_arc, info_run, output_dir,
                                             as_index=False).apply(lambda x:
                                                     x.sample(downsample_size)
                                                                 ).droplevel(0)
-    # reduced_df['new-cell-index'] = list(range(len(reduced_df.index)))
-    # reduced_df['post_downsample-cell_index'] = reduced_df.index
-    
     #Create new file to store downsampling status for all cell IDs
     new_df = pd.DataFrame()
-    os.makedirs(f'{output_dir}/{info_run}', exist_ok = True)
+    os.makedirs(f"{output_dir}/{info_run}", exist_ok = True)
+    #Update this so it relies on df Index instrad of the weird column!
     new_df["Sample_ID-Cell_Index"] = no_arc["Sample_ID-Cell_Index"]
     new_df["In_donwsampled_file"] = new_df["Sample_ID-Cell_Index"].isin(
                                     reduced_df["Sample_ID-Cell_Index"])

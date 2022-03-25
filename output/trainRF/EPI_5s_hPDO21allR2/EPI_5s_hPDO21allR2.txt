@@ -1,0 +1,260 @@
+Train directory:  ../D_CyTOF/Data4CellStateCLASS/PDO21_EGF-Titration/PDO21_ALL_rep2
+Input files:
+(36 files)
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.M_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_2.5ng_2.m_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.M_Phase.txt labelled as m-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.G0.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_1.25ng_2.g0.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.G0.txt labelled as g0
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.G1.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_1.25ng_2.g1.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.G1.txt labelled as g1
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.Apoptosis.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_5ng_2.apoptosis.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.Apoptosis.txt labelled as apoptosis
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.G2.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_1.25ng_2.g2.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.G2.txt labelled as g2
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.Apoptosis.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_0ng_2.apoptosis.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.Apoptosis.txt labelled as apoptosis
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.Apoptosis.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_10ng_1.apoptosis.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.Apoptosis.txt labelled as apoptosis
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.S_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_2.5ng_2.s_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.S_Phase.txt labelled as s-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.S_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_5ng_2.s_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.S_Phase.txt labelled as s-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.S_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_7.5ng_1.s_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.S_Phase.txt labelled as s-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G1.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_10ng_1.g1.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G1.txt labelled as g1
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G0.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_10ng_1.g0.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G0.txt labelled as g0
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.M_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_7.5ng_1.m_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.M_Phase.txt labelled as m-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G2.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_10ng_1.g2.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.G2.txt labelled as g2
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.M_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_5ng_2.m_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.M_Phase.txt labelled as m-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.G2.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_2.5ng_2.g2.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.G2.txt labelled as g2
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.G0.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_0ng_2.g0.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.G0.txt labelled as g0
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.G1.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_0ng_2.g1.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.G1.txt labelled as g1
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.M_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_1.25ng_2.m_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.M_Phase.txt labelled as m-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.M_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_0ng_2.m_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.M_Phase.txt labelled as m-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.G1.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_2.5ng_2.g1.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.G1.txt labelled as g1
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.G2.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_0ng_2.g2.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.G2.txt labelled as g2
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.G0.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_2.5ng_2.g0.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.G0.txt labelled as g0
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.G2.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_5ng_2.g2.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.G2.txt labelled as g2
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.G0.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_5ng_2.g0.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.G0.txt labelled as g0
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.Apoptosis.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_1.25ng_2.apoptosis.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.Apoptosis.txt labelled as apoptosis
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.S_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_1.25ng_2.s_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_1.25ng_2.S_Phase.txt labelled as s-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.S_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_0ng_2.s_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_0ng_2.S_Phase.txt labelled as s-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.G1.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_5ng_2.g1.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_5ng_2.G1.txt labelled as g1
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.M_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_10ng_1.m_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.M_Phase.txt labelled as m-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.G2.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_7.5ng_1.g2.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.G2.txt labelled as g2
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.G0.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_7.5ng_1.g0.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.G0.txt labelled as g0
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.G1.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_7.5ng_1.g1.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.G1.txt labelled as g1
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.Apoptosis.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_2.5ng_2.apoptosis.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_2.5ng_2.Apoptosis.txt labelled as apoptosis
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.S_Phase.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_10ng_1.s_phase.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_10ng_1.S_Phase.txt labelled as s-phase
+arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.Apoptosis.txt
+Train data missing cell state information. Trying to label if info present in file name
+arcsinhtransf_pro_20200109__egf__test__p21_7.5ng_1.apoptosis.txt
+File arcsinhTRANSF_Pro_20200109__EGF__Test__P21_7.5ng_1.Apoptosis.txt labelled as apoptosis
+Downsampling taking place. Check output folder for more info
+2    73977
+4    70189
+3    59422
+0    30885
+1    10504
+5     1862
+Name: cell-state_num, dtype: int64
+Working with  1862  cells per split
+0    1862
+1    1862
+2    1862
+3    1862
+4    1862
+5    1862
+Name: cell-state_num, dtype: int64
+Exact match
+89Y_pHH3_S28
+Exact match
+127I_IdU
+Exact match
+142Nd_cCaspase_3_D175_v3
+Exact match
+150Nd_pRB_S807_S811_v2
+Exact match
+176Yb_Cyclin_B1_2_v2
+Exact match
+cell-state_num
+(10613, 5) (10613,)
+(559, 5) (559,)
+(9339, 5) (9339,)
+(1274, 5) (1274,)
+(Are the) base and calibrated model predictions equal(?) True
+CV score of base model: 0.9764593159609772 (+/- 0.004883782524472561)
+RandomForestClassifier(max_features='sqrt', n_estimators=420, n_jobs=-3,
+                       oob_score=True, random_state=12)
+CalibratedClassifierCV(base_estimator=RandomForestClassifier(max_features='sqrt',
+                                                             n_estimators=420,
+                                                             n_jobs=-3,
+                                                             oob_score=True,
+                                                             random_state=12),
+                       cv='prefit')
+Feature importance ranking:
+Feature 3 (150Nd_pRB_S807_S811_v2) -> 0.26566871223239646
+Feature 1 (127I_IdU) -> 0.21077986649138916
+Feature 0 (89Y_pHH3_S28) -> 0.20587538623354545
+Feature 2 (142Nd_cCaspase_3_D175_v3) -> 0.16273587139792553
+Feature 4 (176Yb_Cyclin_B1_2_v2) -> 0.15494016364474344
+Test2 directory:  ../D_CyTOF/CRC-TME/Epithelial-Cells
+Input files:
+(16 files)
+arcsinhTRANSF_AK-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AKP-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_A-organoids_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-fibroblasts_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_WT-organoids-macrophages_epithelial-cell_w-cell-state.txt
+arcsinhTRANSF_AK-organoids_epithelial-cell_w-cell-state.txt
+Marker with shorter name in model Ab list
+from model 89Y_pHH3_S28
+from input data 89Y_pHH3
+Exact match
+127I_IdU
+Same marker, different channel/version
+from model 142Nd_cCaspase_3_D175_v3
+from input data 142Nd_cCaspase_3
+Marker with shorter name in model Ab list
+from model 150Nd_pRB_S807_S811_v2
+from input data 150Nd_pRB
+Same marker, different channel/version
+from model 176Yb_Cyclin_B1_2_v2
+from input data 176Yb_Cyclin_B1
+Exact match
+cell-state_num
+(Are the) base and calibrated model predictions equal(?) False
+Performance against test data 0.9838998211091234
+              precision    recall  f1-score   support
+
+           0       0.96      0.95      0.95        92
+           1       0.94      0.95      0.94        81
+           2       1.00      1.00      1.00        88
+           3       1.00      1.00      1.00        88
+           4       1.00      1.00      1.00       106
+           5       1.00      1.00      1.00       104
+
+    accuracy                           0.98       559
+   macro avg       0.98      0.98      0.98       559
+weighted avg       0.98      0.98      0.98       559
+
+Performance against test2 data 0.7584796934723803
+              precision    recall  f1-score   support
+
+           0       0.99      0.34      0.51     68661
+           1       0.34      1.00      0.51     23838
+           2       0.02      0.99      0.05      1470
+           3       1.00      1.00      1.00    185542
+           4       1.00      0.59      0.74    141693
+           5       1.00      0.99      1.00     10209
+
+    accuracy                           0.76    431413
+   macro avg       0.73      0.82      0.63    431413
+weighted avg       0.96      0.76      0.81    431413
+
+Log loss score is: 1.4521521946312237
