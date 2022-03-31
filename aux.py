@@ -77,6 +77,69 @@ def readCellState(input_dir, ext=".txt" ,sep="\t"):
     return filelist,dDataFrame
 
 
+def readRFcs_data(labels_input, input_dir, ext=".csv", sep=","):
+    concat_df = False
+    dInput_list = []
+    filelist = [f for f in os.listdir(input_dir) if f.endswith(ext)]
+    if len(filelist)==0:
+        sys.exit(f"ERROR: There are no {ext} files in {input_dir}!")
+    else:
+        print ("Input files:")
+        for i in filelist:
+            print(i)
+            if labels_input == True:
+                df = pd.read_csv(f"{input_dir}/{i}", sep = sep)
+                if "cell-state_num" not in df.columns:
+                    print("Trying to label with info present in file name")
+                    if "apoptosis" in i.lower():
+                        print(i.lower())
+                        print(f"File {i} labelled as apoptosis")
+                        df["cell-state_num"] = 0
+                        concat_df = True
+                    elif "s-phase" in i.lower() or "s_phase" in i.lower():
+                        print(i.lower())
+                        print(f"File {i} labelled as s-phase")
+                        df["cell-state_num"] = 3
+                        concat_df = True
+                    elif "m-phase" in i.lower() or "m_phase" in i.lower():
+                        print(i.lower())
+                        print(f"File {i} labelled as m-phase")
+                        df["cell-state_num"] = 5
+                        concat_df = True
+                    elif "g0" in i.lower():
+                        print(i.lower())
+                        print(f"File {i} labelled as g0")
+                        df["cell-state_num"] = 1
+                        concat_df = True
+                    elif "g1" in i.lower():
+                        print(i.lower())
+                        print(f"File {i} labelled as g1")
+                        df["cell-state_num"] = 2
+                        concat_df = True
+                    elif "g2" in i.lower():
+                        print(i.lower())
+                        print(f"File {i} labelled as g2")
+                        df["cell-state_num"] = 4
+                        concat_df = True
+                    else:
+                        print("WARNING!: Couldn't label input data, reverting to unlabelled mode")
+                        labels_input = False # beware of semi-labelled data!!!!
+                if concat_df == True and labels_input == True: #Auto labelling worked
+                    #len(dInput_list) will be 1, containing a concatenated dataframe
+                    try: #Concatenate new cell-state to existing [0]
+                        dInput_list[0] = pd.concat([dInput_list[0], df], ignore_index=True)
+                    except IndexError: #First pass should land here, where we will create empyt Df at [0]
+                        dInput_list.append(pd.DataFrame())
+                        dInput_list[0] = pd.concat([dInput_list[0], df], ignore_index=True)
+                elif labels_input == True: #Label present from the beggining -> just append datasets to list
+                    dInput_list.append(df)
+            if labels_input == False: #Don't use elif since we want to evaluate the else case change above
+                df = pd.read_csv(f"{input_dir}/{i}", sep = sep)
+                dInput_list.append(df)
+    
+    return labels_input, dInput_list
+
+
 def read_marker_csv(input_dir):
     marker_files = [f for f in os.listdir(f"{input_dir}") if f.endswith(".csv")]
     if len(marker_files) != 1: #Sanity check
@@ -91,6 +154,7 @@ def read_marker_csv(input_dir):
 def translateAbMarkers(dataframe, marker_list):
     translation = {} #Translation layer needed since it's uncommon for names to be exact matches.
     unmmatched = []
+    cold_storage = {}
     for i in dataframe.columns:
         if i in marker_list:
             print("Exact match")
@@ -117,15 +181,20 @@ def translateAbMarkers(dataframe, marker_list):
                             print("from input data", i)
                             translation[i] = i2
                         elif "".join(i.split("_")[1]) == "".join(i2.split("_")[1]): #Fuzziest of matches
-                            print("WARNING: Fuzzy match! Please manually check")
+                            print("WARNING: Fuzzy match! Please manually check.\n",
+                            "Marker will only be added to dictionary if it doesn't generate a duplicate")
                             print("from model", i2)
                             print("from input data", i)
-                            translation[i] = i2
+                            cold_storage[i] = i2 #Avoid duplicates!
                         else:
                             print("ERROR: UNABLE TO PROPERLY MATCH!",i2, i)
                             unmmatched.append(i2)
                 except:
                     pass
+    for k,v in cold_storage.items(): #ENsure no duplicated due to fuzzy matching
+        if v not in translation.values():
+            translation[k] = v
+
     if len(translation) != len(marker_list):
         print("Translated markers",translation)
         print("Unmatched markers", unmmatched)
@@ -133,8 +202,10 @@ def translateAbMarkers(dataframe, marker_list):
         for i in marker_list:
             if i not in translation.values():
                 print(f"ERROR: Missing the following model feature in input data \n {i}")
-        sys.exit(f"ERROR: Missing model features in input data!")
+                sys.exit(f"ERROR: Missing model features in input data!")
+            #Something should happen here!
         #IN the future intead of sys.exit warn user and try to use the minimal 5 marker model.
+    print("Translation dictionary: ", translation)
     dataframe = dataframe.rename(columns=translation)
     
     return dataframe

@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import export_text
 from joblib import dump
-from aux import readCellState, read_marker_csv, downsample_data, translateAbMarkers
+from aux import readCellState, read_marker_csv, downsample_data, translateAbMarkers, yes_or_NO
 import seaborn as sns; sns.set()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~I/O~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -91,7 +91,11 @@ dTrain_dwnsBalanced = dTrain_dwnsBalanced[cols] #Much simpler than above!
 if dTrain_dwnsBalanced.max().astype("float64").max() > 12:
     print("WARNING! IS YOUR DATA NORMALISED? \n CyTOF data is generally normalised using arcsinh(a=5), and it seems like your data might not have been normalised.")
     #Eventually have some code to prompt the user to normalise it here if wanted
-
+    stop_script = yes_or_NO("Do you want to exit the script?")
+    if stop_script:
+        #Do something if yes/true
+        #Something being to exit the run
+        sys.exit("Exiting the script")
 
 
 #~~~~~~~~~~~~~~~~~~~~~TRAIN Random Forest~~~~~~~~~~~~~~~~~~~~#

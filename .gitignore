@@ -163,3 +163,10 @@ output/classRF/crcTME_ALL_statePTMs/crcTME_ALL_statePTMs_tree.dot
 .vscode/settings.json
 input/integrated_dataframe_all-cells.csv
 output/classRF/WENRperm_EPI_5_msiFig4/test_predictions.csv
+input/classRF/test1/
+input/classRF/test2/
+input/classRF/WENRperm_test/
+output/classRF/test1/
+output/classRF/test2/
+output/classRF/UNNAMED/
+output/classRF/WENRperm_test_[EPI_5s_mcNatM5_RFcclass]
